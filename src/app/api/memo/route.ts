@@ -25,7 +25,7 @@ Write a concise investment thesis memo for: ${name} — "${desc}" (sector: ${sec
   const data = await response.json();
 
   if (!response.ok) {
-    return NextResponse.json({ error: "Gemini API error" }, { status: 500 });
+    return NextResponse.json({ error: "Gemini API error", details: data }, { status: 500 });
   }
 
   const memo = data.candidates?.[0]?.content?.parts?.[0]?.text ?? "Could not generate memo.";

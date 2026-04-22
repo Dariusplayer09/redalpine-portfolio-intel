@@ -1,33 +1,28 @@
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
-  const { name, desc, sector } = await req.json();
-
+  const body = await req.json();
+  const name = body.name;
+  const desc = body.desc;
+  const sector = body.sector;
   if (!name || !desc || !sector) {
     return NextResponse.json({ error: "Missing fields" }, { status: 400 });
   }
-
-  const prompt = `You are a venture capital analyst at redalpine, a pan-European VC firm with $1.3B AUM backing GameChangers — software and deep science companies that transform industries. redalpine backs extraordinary founders across fintech, AI/ML, healthtech, climatetech, biotech, and frontier science. Write sharp, confident VC-style thesis memos. Be specific about why a company fits redalpine's thesis. 2-3 sentences max. No fluff.
-
-Write a concise investment thesis memo for: ${name} — "${desc}" (sector: ${sector}). Explain why this fits redalpine's thesis as a GameChanger. Be specific, analytical, VC-grade. Max 3 sentences.`;
-
-  const response = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-04-17:generateContent?key=${process.env.GEMINI_API_KEY}`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-      }),
-    }
-  );
-
-  const data = await response.json();
-
-  if (!response.ok) {
-    return NextResponse.json({ error: "Gemini API error", details: data }, { status: 500 });
-  }
-
+  const key = process.env.GEMINI_API_KEY;
+  const listResp = await fetch("https://generativelanguage.googleapis.com/v1beta/models?key=" + key);
+  const listData = await listResp.json();
+  if (!listResp.ok) return NextResponse.json({ error: "Key invalid", details: listData }, { status: 500 });
+  const models = (listData.models || []).map((m: {name: string}) => m.name);
+  const flashModel = models.find((m: string) => m.includes("flash")) || models[0];
+  if (!flashModel) return NextResponse.json({ error: "No models", models }, { status: 500 });
+  const modelId = flashModel.replace("models/", "");
+  const prompt = "You are a VC analyst at redalpine. Write a sharp 3-sentence investment thesis for: " + name + " sector: " + sector + ".";
+  const resp = await fetch("https://generativelanguage.googleapis.com/v1beta/models/" + modelId + ":generateContent?key=" + key, {
+    method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+  });
+  const data = await resp.json();
+  if (!resp.ok) return NextResponse.json({ error: "Gemini error", model: modelId, details: data }, { status: 500 });
   const memo = data.candidates?.[0]?.content?.parts?.[0]?.text ?? "Could not generate memo.";
   return NextResponse.json({ memo });
 }

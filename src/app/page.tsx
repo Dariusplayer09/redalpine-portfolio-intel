@@ -50,8 +50,16 @@ export default function Home() {
 
         {/* Header */}
         <div className="mb-8 border-b border-neutral-200 pb-6">
-          <p className="text-xs font-medium tracking-widest text-neutral-400 uppercase mb-1">redalpine</p>
-          <h1 className="text-2xl font-medium text-neutral-900">Portfolio Intelligence</h1>
+          <p className="text-xs font-medium tracking-widest mb-1" style={{ color: "#FF0000" }}>redalpine</p>
+          <div className="flex items-center gap-3">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="367.51 4.69 57.68 57.69" width="32" height="32" aria-hidden="true">
+              <path fill="#FF0000" d="M399.8 4.69h-6.91v25.39l6.91-6.91V4.69Z"/>
+              <path fill="#FF0000" d="M399.81 36.99h-6.91v25.39h6.91V36.99Z"/>
+              <path fill="#FF0000" d="M425.19 30.08H399.8v6.91h25.39v-6.91Z"/>
+              <path fill="#FF0000" d="M367.51 30.08v6.91H386l6.91-6.91h-25.4Z"/>
+            </svg>
+            <h1 className="text-2xl font-medium text-neutral-900">Portfolio Intelligence</h1>
+          </div>
           <p className="text-sm text-neutral-500 mt-1">
             Select a company to generate an AI-powered investment thesis memo.
           </p>

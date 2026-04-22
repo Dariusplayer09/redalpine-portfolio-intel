@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
 Write a concise investment thesis memo for: ${name} — "${desc}" (sector: ${sector}). Explain why this fits redalpine's thesis as a GameChanger. Be specific, analytical, VC-grade. Max 3 sentences.`;
 
   const response = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-001:generateContent?key=${process.env.GEMINI_API_KEY}`,
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
